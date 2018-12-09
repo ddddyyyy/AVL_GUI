@@ -77,21 +77,8 @@ GraphWidget::GraphWidget(QWidget *parent)
     scene->setSceneRect(0, 0,400,400);
     setMinimumSize(400, 400);
     setWindowTitle(tr("Elastic Nodes"));
-//! [0]
-
-//! [1]  
-//    Status s;
-//    for (int i=0;i<30;++i){
-//        InsertAVL(t,i,s);
-//    }
-//    centerNode = new Node(this,t);
-//    int depth = GetDepth(t);
-//    qreal x = 20;
-//    paintTree(centerNode,x,20,scene);
-//    scene->setSceneRect(0, 0,x-20, 40*depth);
 }
 //! [1]
-
 
 void GraphWidget::addNode(){
     bool flag = false;
@@ -105,11 +92,9 @@ void GraphWidget::addNode(){
     }
     int input = QInputDialog::getInt(NULL,tr("插入数字"),tr("请输入0-99的数字"),std::rand()%100,0,100,2,&flag);
     if(!flag){
-        //QMessageBox(tr("请规范输入")).show();
         return;
     }
     if(trees.empty()){
-      //  trees.insert(0,NULL);
         trees.push_back(NULL);
     }
     Status s;
@@ -126,7 +111,6 @@ void GraphWidget::deleteNode(){
     if(trees.size()>1){
         number = QInputDialog::getInt(NULL,tr("选择树"),tr("请输入树的编号(从左到右)"),std::rand()%trees.size(),0,trees.size()-1,2,&flag);
         if(!flag){
-            //QMessageBox(tr("请规范输入")).show();
             return;
         }
     }
@@ -143,20 +127,18 @@ void GraphWidget::deleteNode(){
 }
 
 void GraphWidget::searchNode(){
-    int number = 0;
     bool flag = false;
-    if(trees.size()>1){
-        number = QInputDialog::getInt(NULL,tr("选择树"),tr("请输入树的编号(从左到右)"),std::rand()%trees.size(),0,trees.size()-1,2,&flag);
-        if(!flag){
-            return;
-        }
-    }
     int input = QInputDialog::getInt(NULL,tr("搜索数字"),tr("请输入0-99的数字"),std::rand()%100,0,100,2,&flag);
     if(!flag){
         return;
     }
-    BBSTree s = SearchBBST(trees.at(number),input);
-    if(s == NULL){
+    std::vector<BBSTree> result;
+    foreach (BBSTree t, trees) {
+        BBSTree s;
+        s = SearchBBST(t,input);
+        if(NULL!=s)result.push_back(s);
+    }
+    if(result.size()==0){
         QMessageBox::about(NULL,tr("提醒"),tr("该数字不存在"));
         return;
     }
@@ -165,7 +147,7 @@ void GraphWidget::searchNode(){
     foreach (QGraphicsItem *item, scene()->items()) {
         if (Node *node = qgraphicsitem_cast<Node *>(item))
         {
-            node->isSearched=node->node->data==s->data;
+            node->isSearched=std::find(result.begin(),result.end(),node->node)!=result.end();
             node->update();
         }
     }
@@ -278,18 +260,6 @@ void GraphWidget::paintTree(Node* &root,qreal &centerX,qreal centerY,QGraphicsSc
 void GraphWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-//    case Qt::Key_Up:
-//        centerNode->moveBy(0, -20);
-//        break;
-//    case Qt::Key_Down:
-//        centerNode->moveBy(0, 20);
-//        break;
-//    case Qt::Key_Left:
-//        centerNode->moveBy(-20, 0);
-//        break;
-//    case Qt::Key_Right:
-//        centerNode->moveBy(20, 0);
-//        break;
     case Qt::Key_Plus:
         zoomIn();
         break;
