@@ -14,7 +14,7 @@ enum Status
 typedef int RcdType;
 typedef struct BBSTNode{
     RcdType data;
-    int bf;
+    int bf;//平衡因子
     struct BBSTNode *lchild,*rchild;
 } * BBSTree;
 void InOrderTraverse(BBSTree T);
